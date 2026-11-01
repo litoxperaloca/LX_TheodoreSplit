@@ -217,3 +217,153 @@ if Events ~= nil and Events.OnGameStart ~= nil then
             (bad > 0 and (", " .. bad .. " parches omitidos") or ""))
     end)
 end
+
+-- =====================================================================
+-- Mitad de pantalla del jugador (interfaz)
+-- =====================================================================
+-- Theodore ubica su panel y su boton flotante contra la ventana ENTERA. En
+-- pantalla dividida eso los manda a la mitad del otro jugador, o directamente
+-- fuera de su vista. Aca se recortan contra el viewport del jugador que esta
+-- usando la interfaz. Fuera de pantalla dividida el viewport ES la ventana
+-- entera, asi que esto no cambia nada para quien juega solo.
+
+-- Devuelve left, top, width, height del viewport del jugador.
+function LXTH.viewport()
+    local core = getCore()
+    local sw, sh = core:getScreenWidth(), core:getScreenHeight()
+    if type(getPlayerScreenWidth) ~= "function" then return 0, 0, sw, sh end
+
+    local n = LXTH.playerNum()
+    local okW, w = pcall(getPlayerScreenWidth, n)
+    local okH, h = pcall(getPlayerScreenHeight, n)
+    local okL, l = pcall(getPlayerScreenLeft, n)
+    local okT, t = pcall(getPlayerScreenTop, n)
+    if not (okW and okH and okL and okT) then return 0, 0, sw, sh end
+    if type(w) ~= "number" or type(h) ~= "number" or w <= 0 or h <= 0 then
+        return 0, 0, sw, sh
+    end
+    return l or 0, t or 0, w, h
+end
+
+local function clamp(v, lo, hi)
+    if hi < lo then return lo end
+    if v < lo then return lo end
+    if v > hi then return hi end
+    return v
+end
+
+-- Deja un elemento de ancho w (alto h) dentro del viewport del jugador.
+function LXTH.clampX(x, w)
+    local l, _, vw, _ = LXTH.viewport()
+    return math.floor(clamp(tonumber(x) or l, l, l + vw - (tonumber(w) or 0)))
+end
+
+function LXTH.clampY(y, h)
+    local _, t, _, vh = LXTH.viewport()
+    return math.floor(clamp(tonumber(y) or t, t, t + vh - (tonumber(h) or 0)))
+end
+
+-- =====================================================================
+-- Navegacion del panel con mando
+-- =====================================================================
+-- El panel de Theodore son ISButton sueltos: con mouse andan, con mando no hay
+-- forma de llegar a ellos. Aca se le agrega al panel, en caliente, un manejo de
+-- joypad: arriba/abajo recorre los botones, A activa, B cierra.
+--
+-- Solo se toma el foco del mando si ese jugador REALMENTE tiene uno asignado:
+-- si juega con teclado y mouse, el panel queda exactamente como estaba.
+
+local function buttonsOf(panel)
+    local list = {}
+    local ok, kids = pcall(function() return panel:getChildren() end)
+    if not ok or type(kids) ~= "table" then return list end
+    for _, c in pairs(kids) do
+        if type(c) == "table" and type(c.onclick) == "function"
+                and type(c.getY) == "function" then
+            local enabled = true
+            if c.enable ~= nil then enabled = (c.enable == true) end
+            if enabled then list[#list + 1] = c end
+        end
+    end
+    table.sort(list, function(a, b)
+        local ay, by = a:getY(), b:getY()
+        if ay == by then return a:getX() < b:getX() end
+        return ay < by
+    end)
+    return list
+end
+
+local function highlight(panel, list, index)
+    for i, b in ipairs(list) do
+        pcall(function()
+            if i == index then
+                b:setBorderRGBA(1.0, 0.82, 0.25, 1.0)
+            else
+                b:setBorderRGBA(0.45, 0.62, 0.80, 0.45)
+            end
+        end)
+    end
+    panel.lxthIndex = index
+end
+
+function LXTH.releaseJoypad(panel)
+    pcall(function()
+        if panel and panel.lxthJoypad ~= nil and type(setJoypadFocus) == "function" then
+            setJoypadFocus(panel.lxthJoypad, nil)
+        end
+    end)
+    if panel then panel.lxthJoypad = nil end
+end
+
+function LXTH.makeJoypadReady(panel)
+    if panel == nil or panel.lxthJoypadReady then return end
+    panel.lxthJoypadReady = true
+
+    local n = LXTH.playerNum()
+    -- Sin mando asignado a este jugador no tocamos nada.
+    if type(getJoypadData) ~= "function" then return end
+    local okJ, jd = pcall(getJoypadData, n)
+    if not okJ or jd == nil then return end
+
+    panel.playerNum = n
+    panel.lxthJoypad = n
+    panel.lxthIndex = 1
+
+    function panel:onJoypadDown(button, joypadData)
+        local ok, err = pcall(function()
+            if Joypad == nil then return end
+            local list = buttonsOf(self)
+            if #list == 0 then
+                if button == Joypad.BButton then
+                    LXTH.releaseJoypad(self)
+                    pcall(function() self:hide() end)
+                end
+                return
+            end
+            local i = clamp(self.lxthIndex or 1, 1, #list)
+
+            if button == Joypad.DPadUp then
+                highlight(self, list, i > 1 and i - 1 or #list)
+            elseif button == Joypad.DPadDown then
+                highlight(self, list, i < #list and i + 1 or 1)
+            elseif button == Joypad.AButton then
+                local b = list[i]
+                if b then pcall(function() b.onclick(b.target, b) end) end
+            elseif button == Joypad.BButton then
+                LXTH.releaseJoypad(self)
+                pcall(function() self:hide() end)
+            end
+        end)
+        -- Ante cualquier problema soltamos el mando: un panel que se queda con el
+        -- foco deja al jugador sin control, que es peor que no tener navegacion.
+        if not ok then
+            log("panel con mando: " .. tostring(err))
+            LXTH.releaseJoypad(self)
+        end
+    end
+
+    pcall(function() highlight(panel, buttonsOf(panel), 1) end)
+    pcall(function()
+        if type(setJoypadFocus) == "function" then setJoypadFocus(n, panel) end
+    end)
+end

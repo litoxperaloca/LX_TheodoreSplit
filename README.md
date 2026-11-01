@@ -6,7 +6,7 @@
 
 > Theodore is a lovely mod that says, right in its own description, single-player only. It does not have to be.
 
-`Project Zomboid B42.21+` · `v1.0.0` · `CC0`
+`Project Zomboid B42.21+` · `v1.1.0` · `CC0`
 
 [English](#english) · [Español](#español) · [Русский](#русский)
 
@@ -29,6 +29,7 @@ B42 keeps improving controller support, but it is still rough, and the aim-and-s
 - **He sees every local player** — Theodore asks the game for "the player" 166 times, and outside single-player that call only ever returns one of you. Everything that is about perceiving you - distance, following, talking, reacting, looking at what you carry - now resolves to the closest living local player instead.
 - **Your saves keep working** — Two things must NOT move between players: where his saved data lives, and whether he calls you Mom or Dad. Those stay anchored to player 1, exactly where the original put them, so a save from before this mod loads unchanged.
 - **His menus open for whoever asked** — Theodore built his context menus for player 0, hardcoded. Player 2 could not open them at all - with a mouse or a gamepad. They now open for the player who asked, and because Project Zomboid's context menu takes that player's controller focus, this is what makes him usable on a gamepad at all.
+- **His panel stays on your half of the screen, and takes a gamepad** — Theodore's panel and floating button were placed against the whole window, so in split-screen they drifted onto the other player's half. They are now kept inside the viewport of whoever is using them, dragging included. The panel also answers to a controller: d-pad walks the buttons, A presses, B closes. If that player has no gamepad assigned, nothing changes for them.
 - **One son, not one per player** — Theodore stays a single character the household shares, which is how the original models him. Both of you feed him, talk to him and keep him safe; he just answers to whoever is nearby.
 - **Nothing of Theodore is redistributed** — His files are read from your installed copy at load time, patched in memory and run from there. The mod always sits on top of whatever Theodore version you have, and none of his work is shipped inside this mod.
 
@@ -59,7 +60,7 @@ Subscribe on the Workshop page. Steam downloads it; then start Project Zomboid, 
 
 - **Nothing is installed inside Theodore's folder.** Each patch is matched against an exact snippet; if Theodore updates and a snippet no longer matches, that patch is skipped with a note in `console.txt` and his original code runs unchanged.
 - A summary of how many changes were applied is printed in `console.txt` at game start.
-- Theodore's floating button and panel are still positioned against the whole window rather than your half of the screen. Use his context menu, which this mod fixes; the panel is next on the list.
+- The gamepad navigation only engages for a player who actually has a controller assigned, and the panel releases that controller the moment it closes or anything goes wrong - a panel that keeps the pad would leave you unable to move, which is worse than no navigation at all. On keyboard and mouse nothing changes.
 - Must load **after** Theodore. `mod.info` already declares it.
 - Credit where it is due: Theodore is not mine. This only teaches it to count past one player.
 
@@ -98,6 +99,7 @@ La B42 viene mejorando el soporte de mando, pero todavía deja mucho que desear,
 - **Ve a todos los jugadores locales** — Theodore le pide al juego "el jugador" 166 veces, y fuera de un jugador esa llamada devuelve siempre a uno solo. Todo lo que tiene que ver con percibirte - distancia, seguirte, hablarte, reaccionar, mirar lo que llevas - ahora resuelve al jugador local vivo mas cercano.
 - **Tus partidas siguen andando** — Hay dos cosas que NO pueden moverse entre jugadores: donde viven sus datos guardados, y si te dice Mom o Dad. Esas quedan ancladas al jugador 1, exactamente donde las puso el original, asi que una partida anterior a este mod carga sin cambios.
 - **Sus menus se abren para quien los pidio** — Theodore armaba sus menus contextuales para el jugador 0, fijo en el codigo. El jugador 2 no podia abrirlos ni con mouse ni con mando. Ahora se abren para quien los pidio, y como el menu contextual de Project Zomboid toma el foco del mando de ese jugador, eso es justamente lo que lo hace usable con mando.
+- **Su panel se queda en tu mitad de pantalla, y anda con mando** — El panel y el boton flotante de Theodore se ubicaban contra la ventana entera, asi que en pantalla dividida se iban a la mitad del otro jugador. Ahora se mantienen dentro del viewport de quien los esta usando, incluso al arrastrarlos. El panel ademas responde al mando: la cruceta recorre los botones, A activa, B cierra. Si ese jugador no tiene mando asignado, para el no cambia nada.
 - **Un hijo, no uno por jugador** — Theodore sigue siendo un solo personaje que la casa comparte, que es como lo piensa el original. Los dos le dan de comer, le hablan y lo cuidan; el simplemente le responde a quien tenga cerca.
 - **No se redistribuye nada de Theodore** — Sus archivos se leen de tu copia instalada al cargar, se parchean en memoria y se ejecutan desde ahi. El mod siempre corre sobre la version de Theodore que tengas, y no lleva adentro nada de su trabajo.
 
@@ -129,7 +131,7 @@ alcanza para todos los jugadores.
 
 - **No se instala nada dentro de la carpeta de Theodore.** Cada parche se compara contra un fragmento exacto; si Theodore se actualiza y un fragmento deja de coincidir, ese parche se omite con un aviso en `console.txt` y su codigo original corre sin cambios.
 - Al iniciar la partida se imprime en `console.txt` un resumen de cuantos cambios se aplicaron.
-- El boton flotante y el panel de Theodore todavia se posicionan contra la ventana entera y no contra tu mitad de pantalla. Usa su menu contextual, que este mod si arregla; el panel es lo proximo.
+- La navegacion con mando solo se activa para un jugador que realmente tenga un control asignado, y el panel suelta ese control apenas se cierra o si algo falla: un panel que se queda con el mando te deja sin poder moverte, que es peor que no tener navegacion. Con teclado y mouse no cambia nada.
 - Debe cargar **despues** de Theodore. El `mod.info` ya lo declara.
 - El credito donde corresponde: Theodore no es mio. Esto solo le ensena a contar mas alla de un jugador.
 
@@ -168,6 +170,7 @@ B42 продолжает улучшать поддержку контролле�
 - **Он видит всех локальных игроков** — Theodore 166 раз спрашивает у игры «игрока», и вне одиночной игры этот вызов всегда возвращает одного. Всё, что связано с восприятием — расстояние, слежка, разговоры, реакции — теперь указывает на ближайшего живого локального игрока.
 - **Старые сохранения работают** — Две вещи НЕ должны переходить между игроками: где хранятся его данные и как он к вам обращается. Они привязаны к первому игроку, ровно туда, куда их поместил оригинал.
 - **Меню открываются для того, кто их вызвал** — Контекстные меню Theodore были жёстко заданы для игрока 0, и второй игрок не мог их открыть ни мышью, ни геймпадом. Теперь меню берёт фокус геймпада нужного игрока — именно это делает мод играбельным с контроллером.
+- **Панель остаётся на вашей половине экрана и работает с геймпадом** — Панель и плавающая кнопка размещались относительно всего окна и на разделённом экране уезжали на половину другого игрока. Теперь они удерживаются в пределах его области, включая перетаскивание. Панель также отвечает на геймпад: крестовина перемещается по кнопкам, A нажимает, B закрывает.
 - **Один сын, а не по одному на игрока** — Theodore остаётся одним персонажем на всю семью, как и задумано в оригинале. Он просто отвечает тому, кто рядом.
 - **Ничего из Theodore не распространяется** — Его файлы читаются из вашей копии при загрузке, патчатся в памяти и запускаются оттуда.
 
@@ -199,7 +202,7 @@ B42 продолжает улучшать поддержку контролле�
 
 - **Внутрь папки Theodore ничего не устанавливается.** Если мод обновится и фрагмент перестанет совпадать, этот патч пропускается.
 - При запуске игры в `console.txt` выводится сводка применённых изменений.
-- Плавающая кнопка и панель Theodore пока располагаются относительно всего окна. Пользуйтесь контекстным меню.
+- Навигация геймпадом включается только для игрока с назначенным контроллером, и панель отпускает его сразу при закрытии или при любой ошибке: панель, удерживающая геймпад, оставит вас без управления. С клавиатурой и мышью ничего не меняется.
 - Загружать **после** Theodore.
 - Theodore — не мой мод. Этот патч лишь учит его считать дальше одного игрока.
 
