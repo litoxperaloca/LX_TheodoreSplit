@@ -1,0 +1,15 @@
+name=LX Theodore Split-Screen Fix [B42]
+id=LX_TheodoreSplit
+author=litoxperaloca
+description=[EN] Splitscreen / split screen / local couch co-op fix for the Theodore mod in Project Zomboid Build 42 (B42), and the gamepad support it is missing. Theodore is written for a single player: it asks the game for "the player" 166 times, and in split-screen that call only ever returns one of you, so your son simply does not see the others. Now he notices, follows, talks to and reacts to whichever local player is closest, while the things that must stay put - his saved data and whether he calls you Mom or Dad - stay anchored to player 1 so existing saves keep working. His menus also open for the player who asked, instead of always player 1, which is what makes him usable with a controller at all. Theodore's own files are never shipped or overwritten: they are read from your installed copy and patched in memory. Must load AFTER Theodore.
+description=<LINE>
+description=[ES] Arreglo de pantalla dividida (splitscreen, split screen, coop local de sillon) para el mod Theodore en Project Zomboid Build 42 (B42), y el soporte de mando que le falta. Theodore esta escrito para un solo jugador: le pide al juego "el jugador" 166 veces, y en pantalla dividida esa llamada devuelve siempre a uno solo, asi que tu hijo directamente no ve a los demas. Ahora nota, sigue, habla y reacciona al jugador local mas cercano, mientras que lo que tiene que quedarse fijo - sus datos guardados y si te dice Mom o Dad - sigue colgando del jugador 1, asi las partidas existentes siguen funcionando. Sus menus tambien se abren para el jugador que los pidio en vez de siempre el 1, que es lo que lo hace usable con mando. Los archivos de Theodore nunca se distribuyen ni se pisan: se leen de tu copia instalada y se parchean en memoria. Debe cargar DESPUES de Theodore.
+description=<LINE>
+description=[RU] Исправление разделённого экрана (splitscreen, локальный кооп) для мода Theodore в Project Zomboid Build 42 (B42), плюс поддержка геймпада, которой ему не хватает. Theodore написан для одного игрока: он 166 раз спрашивает у игры «игрока», а на разделённом экране этот вызов возвращает только одного из вас, поэтому сын просто не видит остальных. Теперь он замечает, следует, говорит и реагирует на ближайшего локального игрока, а то, что должно оставаться неизменным — его сохранённые данные и обращение к вам — привязано к первому игроку, чтобы старые сохранения работали. Его меню теперь открываются для того игрока, который их вызвал, а не всегда для первого — именно это делает его пригодным для геймпада. Файлы Theodore никогда не распространяются и не перезаписываются. Загружать ПОСЛЕ Theodore.
+modversion=1.0.0
+versionMin=42.21
+poster=poster.png
+icon=icon.png
+url=https://github.com/litoxperaloca/LX_TheodoreSplit
+require=\Theodore
+loadModAfter=\Theodore
